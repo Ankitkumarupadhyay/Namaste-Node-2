@@ -1,8 +1,38 @@
-// console.log("hello node")
-const express = require("express");
 // const { adminAuth, userAuth } = require("./middleware/adminAuthenticate");
-
+const express = require("express");
+const connectDB = require("./config/database");
+const User = require("./models/user");
 const app = express();
+
+app.post("/signup", async (req, res) => {
+  const userObj = {
+    firstName: "Ankit",
+    lastName: "Kumar",
+    emailId: "ankitupadhyay@gmail.com",
+    password: "Ankit@428",
+    age: 20,
+    gender: "male",
+  };
+  // new instance of user model
+  const user = new User(userObj);
+  try {
+    await user.save();
+    res.send("User added succesfully");
+  } catch (err) {
+    res.status(400).send("User not added");
+  }
+});
+
+connectDB()
+  .then(() => {
+    console.log("Database connected succesfully");
+    app.listen(7777, () => {
+      console.log("Server is listening on port 7777");
+    });
+  })
+  .catch((err) => {
+    console.error("Some error occured");
+  });
 
 // app.use("/getSecretData", (req, res) => {
 //   res.send("This is a secret data....");
@@ -70,21 +100,19 @@ const app = express();
 //   res.send("User's data");
 // });
 
-app.use("/user", (req, res ) => {
-  throw new Error("abcd")
-  res.send("Data is being sent");
-});
-app.use("/", (err ,req, res ,next) => {
- if(err){
-  res.status(500).send("Something went wrong")
- }
-});
-
-app.listen(7777, () => {
-  console.log("Server is listening on port 7777");
-});
+// app.use("/user", (req, res ) => {
+//   throw new Error("abcd")
+//   res.send("Data is being sent");
+// });
+// app.use("/", (err ,req, res ,next) => {
+//  if(err){
+//   res.status(500).send("Something went wrong")
+//  }
+// });
 
 // Advanced Routing ----
 // 1. /ab?c => means b is optional , api will match routes having /abc and /ac also
 // 2. /ab+c => means a and c is fixed in start and last ,but we have multiple b in between , /ac,/abc,/abbc,/abbbc .
 // 3. /ab*cd => means ab and cd is fixed in start and last, & we can have anything between these two.
+
+// mongodb+srv://ankitupadhyay4519:5vacK5344gBY0BrN@namastenode.xrfjt.mongodb.net/
